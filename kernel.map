@@ -1,0 +1,178 @@
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+*default*        0x00000000         0xffffffff
+
+Linker script and memory map
+
+LOAD build/main.o
+LOAD build/controllerController.o
+LOAD build/jtag.o
+LOAD build/framebuffer.o
+LOAD build/gameController.o
+LOAD build/screenController.o
+
+.init           0x00008000        0x4
+ *(.init)
+ .init          0x00008000        0x4 build/main.o
+                0x00008000                _start
+
+.data           0x00009080     0x4070
+ *(.data)
+ .data          0x00009080        0x0 build/main.o
+ .data          0x00009080        0x0 build/controllerController.o
+ .data          0x00009080        0x0 build/jtag.o
+ *fill*         0x00009080      0xf80 3f3f3f3f
+ .data          0x0000a000     0x1000 build/framebuffer.o
+                0x0000a000                FrameBufferInfo
+                0x0000a030                FrameBufferPointer
+ .data          0x0000b000     0x1840 build/gameController.o
+ .data          0x0000c840      0x8b0 build/screenController.o
+ *.c.o(*)
+
+.igot.plt       0x0000d0f0        0x0
+ .igot.plt      0x00000000        0x0 build/main.o
+
+.text           0x0000d0f0     0x1818
+ *.c.o(.text)
+ *(.text)
+ .text          0x0000d0f0       0x24 build/main.o
+ .text          0x0000d114      0x238 build/controllerController.o
+                0x0000d114                initializeController
+                0x0000d17c                readSNES
+                0x0000d280                interpreteSNES
+ .text          0x0000d34c       0x8c build/jtag.o
+                0x0000d34c                EnableJTAG
+ .text          0x0000d3d8       0xb8 build/framebuffer.o
+                0x0000d3d8                InitFrameBuffer
+                0x0000d420                MailboxWrite
+                0x0000d450                MailboxRead
+ .text          0x0000d490      0xa00 build/gameController.o
+                0x0000d490                startGame
+                0x0000d714                calcArrOffset
+                0x0000d730                moveUserRight
+                0x0000d784                moveUserLeft
+                0x0000d7d8                userShoot
+                0x0000d814                enemyShoot
+                0x0000d84c                decideAiShoot
+                0x0000d904                updateAi
+                0x0000d980                moveAiRowLeft
+                0x0000da28                moveAiRowRight
+                0x0000dad0                moveProjectile
+                0x0000db54                moveEnemyProjectile
+                0x0000dbb8                updateScore
+                0x0000dbf0                checkCollision
+                0x0000dcb0                checkEnemyCollision
+                0x0000dd04                subtractEnemyCounter
+                0x0000dd20                updateBalistics
+                0x0000dd8c                updateEnemyBalistics
+                0x0000ddf8                resetGame
+ .text          0x0000de90      0xa78 build/screenController.o
+                0x0000de90                DrawPixel
+                0x0000ded8                DrawChar
+                0x0000df38                drawString
+                0x0000df80                displayInitScreen
+                0x0000e094                drawQueen
+                0x0000e0fc                drawKnight
+                0x0000e164                drawPawn
+                0x0000e1cc                drawCover
+                0x0000e234                drawCover2
+                0x0000e29c                drawCover3
+                0x0000e304                drawUser
+                0x0000e36c                eraseSquare
+                0x0000e3d4                drawProjectile
+                0x0000e424                displayGameBoard
+                0x0000e570                displayPauseMenu
+                0x0000e580                drawPauseBox
+                0x0000e60c                borderSelectResume
+                0x0000e66c                borderSelectRestart
+                0x0000e6cc                borderSelectQuit
+                0x0000e72c                displayWinScreen
+                0x0000e764                displayLoseScreen
+                0x0000e79c                displayScore
+                0x0000e80c                clearScreen
+                0x0000e868                clearMenuScreen
+OUTPUT(build/output.elf elf32-littlearm)
+
+.glue_7         0x0000e908        0x0
+ .glue_7        0x00000000        0x0 linker stubs
+
+.glue_7t        0x0000e908        0x0
+ .glue_7t       0x00000000        0x0 linker stubs
+
+.vfp11_veneer   0x0000e908        0x0
+ .vfp11_veneer  0x00000000        0x0 linker stubs
+
+.v4_bx          0x0000e908        0x0
+ .v4_bx         0x00000000        0x0 linker stubs
+
+.iplt           0x0000e908        0x0
+ .iplt          0x00000000        0x0 build/main.o
+
+.rel.dyn        0x0000e908        0x0
+ .rel.iplt      0x00000000        0x0 build/main.o
+
+.bss            0x0000e908        0x0
+ .bss           0x0000e908        0x0 build/main.o
+ .bss           0x0000e908        0x0 build/controllerController.o
+ .bss           0x0000e908        0x0 build/jtag.o
+ .bss           0x0000e908        0x0 build/framebuffer.o
+ .bss           0x0000e908        0x0 build/gameController.o
+ .bss           0x0000e908        0x0 build/screenController.o
+
+.ARM.attributes
+                0x00000000       0x26
+ .ARM.attributes
+                0x00000000       0x26 build/main.o
+ .ARM.attributes
+                0x00000026       0x26 build/controllerController.o
+ .ARM.attributes
+                0x0000004c       0x26 build/jtag.o
+ .ARM.attributes
+                0x00000072       0x26 build/framebuffer.o
+ .ARM.attributes
+                0x00000098       0x26 build/gameController.o
+ .ARM.attributes
+                0x000000be       0x26 build/screenController.o
+
+.debug_line     0x00000000      0x840
+ .debug_line    0x00000000       0x54 build/main.o
+ .debug_line    0x00000054       0xe9 build/controllerController.o
+ .debug_line    0x0000013d       0x61 build/jtag.o
+ .debug_line    0x0000019e       0x7c build/framebuffer.o
+ .debug_line    0x0000021a      0x2f5 build/gameController.o
+ .debug_line    0x0000050f      0x331 build/screenController.o
+
+.debug_info     0x00000000      0x263
+ .debug_info    0x00000000       0x5b build/main.o
+ .debug_info    0x0000005b       0x6f build/controllerController.o
+ .debug_info    0x000000ca       0x5f build/jtag.o
+ .debug_info    0x00000129       0x66 build/framebuffer.o
+ .debug_info    0x0000018f       0x69 build/gameController.o
+ .debug_info    0x000001f8       0x6b build/screenController.o
+
+.debug_abbrev   0x00000000       0x76
+ .debug_abbrev  0x00000000       0x12 build/main.o
+ .debug_abbrev  0x00000012       0x14 build/controllerController.o
+ .debug_abbrev  0x00000026       0x14 build/jtag.o
+ .debug_abbrev  0x0000003a       0x14 build/framebuffer.o
+ .debug_abbrev  0x0000004e       0x14 build/gameController.o
+ .debug_abbrev  0x00000062       0x14 build/screenController.o
+
+.debug_aranges  0x00000000       0xc8
+ .debug_aranges
+                0x00000000       0x28 build/main.o
+ .debug_aranges
+                0x00000028       0x20 build/controllerController.o
+ .debug_aranges
+                0x00000048       0x20 build/jtag.o
+ .debug_aranges
+                0x00000068       0x20 build/framebuffer.o
+ .debug_aranges
+                0x00000088       0x20 build/gameController.o
+ .debug_aranges
+                0x000000a8       0x20 build/screenController.o
+
+.debug_ranges   0x00000000       0x20
+ .debug_ranges  0x00000000       0x20 build/main.o
